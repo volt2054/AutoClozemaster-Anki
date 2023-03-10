@@ -6,7 +6,7 @@ I am by no means a good programmer this was just a hour long project crappily th
 
 # Usage
 1. Download script
-2. pip install -r requirements.txt
+2. `pip install -r requirements.txt`
 3. Download wordlist
 4. Change wordlist variable in main.py to the name of your wordlist
 5. Change language (if using generateAudio)
