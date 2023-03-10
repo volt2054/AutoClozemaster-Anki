@@ -75,6 +75,8 @@ my_deck = genanki.Deck(
 
 package = genanki.Package(my_deck)
 count = 0
+progress = 0
+total = amountOfWords * sentencesPerWord
 
 for word_and_frequency in file.readlines():
 
@@ -92,22 +94,20 @@ for word_and_frequency in file.readlines():
     word = word_and_frequency.split(' ')[0]
     query = url + options + "&query=" + word
 
-    print("making request")
-
     r = requests.get(query,
                             headers={'Accept': 'application/json'})
 
     r = r.json()
 
     amountOfSentencesGrabbed = 0
-    if len(r["results"]) > sentencesPerWord:
+    if len(r["results"]) < sentencesPerWord:
       amountOfSentencesGrabbed = len(r["results"])
+      total -= sentencesPerWord - amountOfSentencesGrabbed
     else:
       amountOfSentencesGrabbed = sentencesPerWord
-      
-
 
     for i in range(amountOfSentencesGrabbed):
+        progress += 1
         sentence = r["results"][i]["text"]
 
         translationList = r["results"][i]["translations"]
@@ -119,7 +119,6 @@ for word_and_frequency in file.readlines():
 
         if generateAudio:
             path = "recordings/" + word + str(i) + ".mp3"
-            print("getting audio")
             gTTS(sentence, lang=language).save(path)
             package.media_files.append(path)
 
@@ -138,7 +137,7 @@ for word_and_frequency in file.readlines():
 
         my_deck.add_note(test_note)
 
-        print(str(((count-1) * sentencesPerWord) + (i+1)) + "/" + str(amountOfWords*sentencesPerWord))
+        print(str(progress) + "/" + str(total))
 
     time.sleep(delay)
 
