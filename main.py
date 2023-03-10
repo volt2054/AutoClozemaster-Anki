@@ -94,6 +94,7 @@ for word_and_frequency in file.readlines():
     word = word_and_frequency.split(' ')[0]
     query = url + options + "&query=" + word
 
+
     r = requests.get(query,
                             headers={'Accept': 'application/json'})
 
