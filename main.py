@@ -4,21 +4,33 @@ import json
 import time
 import random
 import re
-from gtts import gTTS
+#from gtts import gTTS
+from google.cloud import texttospeech
 import os
 
-language = "sk"
-wordlist = "sk_50k.txt"
-sentencesPerWord = 5
+language = "de-DE"
+wordlist = "de_50k.txt"
+sentencesPerWord = 4
 generateAudio = True
-amountOfWords = 1000
-delay = 0
+amountOfWords = 2500
+delay = 0.1
+
+
+client = texttospeech.TextToSpeechClient()
+voice = texttospeech.VoiceSelectionParams(
+    language_code=language, name="de-DE-Neural2-B"
+)
+audio_config = texttospeech.AudioConfig(
+    audio_encoding=texttospeech.AudioEncoding.MP3
+)
+
 
 
 file = open(wordlist, 'r')
 
 url="https://tatoeba.org/eng/api_v0/search?"
-options="from=slk&to=eng&sort=relevance"
+options="from=deu&to=eng&sort=relevance"
+
 
 audio_model = genanki.Model(
   eval("random.randrange(1 << 30, 1 << 31)"),
@@ -63,10 +75,10 @@ css='.card {\n font-family: arial;\n font-size: 20px;\n text-align: center;\n co
 
 
 
-if generateAudio:
-    if os.path.exists("recordings/"):
-        for i in os.listdir("recordings"):
-            os.remove('recordings/' +i)
+#if generateAudio:
+#    if os.path.exists("recordings/"):
+#        for i in os.listdir("recordings"):
+#            os.remove('recordings/' +i)
 
 
 my_deck = genanki.Deck(
@@ -94,9 +106,17 @@ for word_and_frequency in file.readlines():
     word = word_and_frequency.split(' ')[0]
     query = url + options + "&query=" + word
 
-
-    r = requests.get(query,
+    for attempt in range(10):
+      try:
+        r = requests.get(query,
                             headers={'Accept': 'application/json'})
+      except:
+        print("Error caught: " + query)
+        time.sleep(3)
+      else:
+        break
+    else:
+      print("Failed: " + query)
 
     r = r.json()
 
@@ -120,7 +140,16 @@ for word_and_frequency in file.readlines():
 
         if generateAudio:
             path = "recordings/" + word + str(i) + ".mp3"
-            gTTS(sentence, lang=language).save(path)
+            if os.path.exists(path) == False:
+              synthesis_input = texttospeech.SynthesisInput(text=sentence)
+              response = client.synthesize_speech(
+                input=synthesis_input, voice=voice, audio_config=audio_config
+              )
+              with open(path, "wb") as out:
+                # Write the response to the output file.
+                out.write(response.audio_content)
+
+            #gTTS(sentence, lang=language).save(path)
             package.media_files.append(path)
 
         sentence = re.sub(word, "{{c1::"+word+"}}", sentence,  flags=re.I)
