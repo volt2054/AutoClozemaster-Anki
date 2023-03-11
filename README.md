@@ -4,6 +4,8 @@ Automatically generates clozemaster decks based off frequency lists from [these 
 ### ⚠️Disclaimer⚠️
 I am by no means a good programmer this was just a hour long project crappily thrown together
 
+# You now need to use the Google Cloud TTS api which requires you to install the gcloud cli
+
 # Usage
 1. Download script
 2. `pip install -r requirements.txt`
