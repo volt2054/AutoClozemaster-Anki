@@ -1,5 +1,5 @@
 # AutoClozemaster-Anki
-Automatically generates clozemaster decks based off frequency lists from [these frequency lists](https://github.com/hermitdave/FrequencyWords)
+Automatically generates clozemaster-style decks based off frequency lists from [these frequency lists](https://github.com/hermitdave/FrequencyWords)
 
 ### ⚠️Disclaimer⚠️
 I am by no means a good programmer this was just a hour long project crappily thrown together
@@ -13,5 +13,3 @@ I am by no means a good programmer this was just a hour long project crappily th
 4. Change wordlist variable in main.py to the name of your wordlist
 5. Change language (if using generateAudio)
 6. Configure how you want
-
-Idk what else to say here :D have fun
